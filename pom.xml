@@ -88,6 +88,13 @@
 			<groupId>org.springframework.ai</groupId>
 			<artifactId>spring-ai-starter-vector-store-qdrant</artifactId>
 		</dependency>
+
+		<!--Reading the PDF Document-->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-tika-document-reader</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.learning</groupId>
 			<artifactId>openai</artifactId>

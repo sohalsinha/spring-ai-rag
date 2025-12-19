@@ -1,6 +1,9 @@
 package com.learning.openai.controller;
 
+import com.learning.openai.advisors.TokenUsageAuditAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -31,15 +34,21 @@ public class RAGController {
     @Value("classpath:/templates/systemPromptRandomDataTemplate.st")
     Resource systemPromptRandomDataTemplate;
 
-    @GetMapping("/random/chat")
+    @Value("classpath:/templates/systemPromptRandomDataTemplatePDF.st")
+    Resource hrSystemTemplate;
+
+    /*@GetMapping("/random/chat")
     public ResponseEntity<String> randomChat(@RequestHeader("username") String username,
                                                @RequestParam("message") String message) {
 
+        //Recommended Topk - 3 to get more accurate answer
         SearchRequest request = SearchRequest.builder().query(message)
                 .topK(3)
                 .similarityThreshold(0.5)
                 .build();
+
         List<Document> similarDocs = vectorStore.similaritySearch(request);
+
         String similarcontext = similarDocs.stream().map(Document::getText)
                 .collect(Collectors.joining(System.lineSeparator()));
 
@@ -52,4 +61,82 @@ public class RAGController {
         return  ResponseEntity.ok(answer);
 
     }
+
+
+    @GetMapping("/document/chat")
+    public ResponseEntity<String> documentChat(@RequestHeader("username") String username,
+                                             @RequestParam("message") String message) {
+
+
+        SearchRequest request = SearchRequest.builder().query(message)
+                .topK(3)
+                .similarityThreshold(0.5)
+                .build();
+        List<Document> similarDocs = vectorStore.similaritySearch(request);
+        String similarcontext = similarDocs.stream().map(Document::getText)
+                .collect(Collectors.joining(System.lineSeparator()));
+
+        String answer = chatClient.prompt().system(
+                        promptSystemSpec -> promptSystemSpec.text(hrSystemTemplate).param("documents",similarcontext))
+                .advisors(a -> a.param(CONVERSATION_ID, username))
+                .user(message)
+                .call().content();
+
+        return  ResponseEntity.ok(answer);
+
+    }*/
+
+    //With RAG Changes in Config
+    @GetMapping("/random/chat")
+    public ResponseEntity<String> randomChat(@RequestHeader("username") String username,
+                                             @RequestParam("message") String message) {
+
+        //Recommended Topk - 3 to get more accurate answer
+       /* SearchRequest request = SearchRequest.builder().query(message)
+                .topK(3)
+                .similarityThreshold(0.5)
+                .build();
+
+        List<Document> similarDocs = vectorStore.similaritySearch(request);
+
+        String similarcontext = similarDocs.stream().map(Document::getText)
+                .collect(Collectors.joining(System.lineSeparator()));*/
+
+        String answer = chatClient.prompt()
+                /*.system(
+                        promptSystemSpec -> promptSystemSpec.text(systemPromptRandomDataTemplate).param("documents",similarcontext))
+                */
+                .advisors(a -> a.param(CONVERSATION_ID, username))
+                .user(message)
+                .call().content();
+
+        return  ResponseEntity.ok(answer);
+
+    }
+
+    //With RAG Changes in Config
+    @GetMapping("/document/chat")
+    public ResponseEntity<String> documentChat(@RequestHeader("username") String username,
+                                               @RequestParam("message") String message) {
+
+
+       /* SearchRequest request = SearchRequest.builder().query(message)
+                .topK(3)
+                .similarityThreshold(0.5)
+                .build();
+        List<Document> similarDocs = vectorStore.similaritySearch(request);
+        String similarcontext = similarDocs.stream().map(Document::getText)
+                .collect(Collectors.joining(System.lineSeparator()));*/
+
+        String answer = chatClient.prompt()
+                /*.system(
+                        promptSystemSpec -> promptSystemSpec.text(hrSystemTemplate).param("documents",similarcontext))
+                */.advisors(a -> a.param(CONVERSATION_ID, username))
+                .user(message)
+                .call().content();
+
+        return  ResponseEntity.ok(answer);
+
+    }
+
 }

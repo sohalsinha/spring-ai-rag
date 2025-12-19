@@ -5,11 +5,10 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+//@Component
 public class RandomDataLoader {
 
     private final VectorStore vectorStore;
